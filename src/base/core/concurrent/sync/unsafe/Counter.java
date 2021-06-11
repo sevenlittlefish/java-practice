@@ -17,9 +17,7 @@ public class Counter {
             field.setAccessible(true);
             unsafe = (Unsafe)field.get(null);
             offset = unsafe.objectFieldOffset(Counter.class.getDeclaredField("count"));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
