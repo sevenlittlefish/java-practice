@@ -215,9 +215,9 @@ public class CompletableFutureTest {
      */
     public static void thenCombineExample() {
         String original = "Message";
-        CompletableFuture cf = CompletableFuture.completedFuture(original).thenApply(s -> delayedUpperCase(s))
+        CompletableFuture cf = CompletableFuture.completedFuture(original).thenApply(CompletableFutureTest::delayedUpperCase)
                 .thenCombine(
-                        CompletableFuture.completedFuture(original).thenApply(s -> delayedLowerCase(s)),
+                        CompletableFuture.completedFuture(original).thenApply(CompletableFutureTest::delayedLowerCase),
                         (s1, s2) -> s1 + s2);
         System.out.println(Objects.equals("MESSAGEmessage", cf.getNow(null)));
     }
@@ -228,9 +228,9 @@ public class CompletableFutureTest {
     public static void thenCombineAsyncExample() {
         String original = "Message";
         CompletableFuture cf = CompletableFuture.completedFuture(original)
-                .thenApplyAsync(s -> delayedUpperCase(s))
+                .thenApplyAsync(CompletableFutureTest::delayedUpperCase)
                 .thenCombine(
-                        CompletableFuture.completedFuture(original).thenApplyAsync(s -> delayedLowerCase(s)),
+                        CompletableFuture.completedFuture(original).thenApplyAsync(CompletableFutureTest::delayedLowerCase),
                         (s1, s2) -> s1 + s2);
         System.out.println(Objects.equals("MESSAGEmessage", cf.join()));
     }
