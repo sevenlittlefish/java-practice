@@ -14,6 +14,7 @@ public class ThreadInterruptTest {
                     }
                 } catch (InterruptedException e) {
                     //直接捕获中断异常如sleep或wait，Thread.interrupted()依旧是未中断状态，需要手动设置中断
+                    //恢复中断状态以避免屏蔽中断
                     Thread.currentThread().interrupt();
                 }
                 System.out.println(Thread.currentThread().getName() + " sleep/wait end");
