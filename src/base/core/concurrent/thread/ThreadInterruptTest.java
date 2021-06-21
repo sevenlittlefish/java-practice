@@ -6,7 +6,7 @@ public class ThreadInterruptTest {
         Thread t = new Thread(() -> {
             long start = System.currentTimeMillis();
             while (!Thread.interrupted()) {
-                System.out.println(Thread.currentThread().getName() + " start sleep/wait");
+                System.out.println(Thread.currentThread().getName() + " sleep/wait start");
                 try {
 //                    Thread.sleep(2000);
                     synchronized (Thread.currentThread()) {
@@ -16,6 +16,7 @@ public class ThreadInterruptTest {
                     //直接捕获中断异常如sleep或wait，Thread.interrupted()依旧是未中断状态，需要手动设置中断
                     Thread.currentThread().interrupt();
                 }
+                System.out.println(Thread.currentThread().getName() + " sleep/wait end");
             }
             System.out.println("Time consume " + (System.currentTimeMillis() - start)+" ms");
         });
