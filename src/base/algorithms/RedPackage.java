@@ -55,6 +55,16 @@ public class RedPackage {
                     break;
                 }
             }
+            //可替代步骤3、4，使红包金额分散得更加均匀
+            /*while (addMoney.compareTo(BigDecimal.ZERO) > 0){
+                BigDecimal realAddMoney = buildMoney(addMoney, addMoney);
+                int index = random.nextInt(num);
+                BigDecimal resultMoney = arr[index].add(realAddMoney);
+                if (resultMoney.compareTo(maxMoney) <= 0){
+                    arr[index] = resultMoney;
+                    addMoney = addMoney.subtract(realAddMoney);
+                }
+            }*/
         }
         //校验算法是否正确
         validate(arr, totalMoney, maxMoney);
