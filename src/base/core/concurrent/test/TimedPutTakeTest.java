@@ -53,8 +53,8 @@ public class TimedPutTakeTest {
             barrier.await();
             barrier.await();
             long nsPerItem = timer.getTime() / (nPairs * (long) nTrials);
-            System.out.println(String.format("Throughput: %s ns/item", nsPerItem));
-            System.out.println(String.format("putSum:%s, takeSum:%s", putSum.get(), takeSum.get()));
+            long itemPerSec = (nPairs * (long) nTrials * (long) Math.pow(10, 9)) / timer.getTime();
+            System.out.println(String.format("Throughput: %s ns/item, TPS: %s item/s", nsPerItem, itemPerSec));
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
