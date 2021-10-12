@@ -10,6 +10,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
+/**
+ * 默认情况下 CompletableFuture 会使用公共的 ForkJoinPool 线程池，这个线程池默认创建的线程数是 CPU 的核数
+ * （也可以通过 JVM option:-Djava.util.concurrent.ForkJoinPool.common.parallelism 来设置 ForkJoinPool 线程池的线程数）。
+ * 如果所有 CompletableFuture 共享一个线程池，那么一旦有任务执行一些很慢的 I/O 操作，就会导致线程池中所有线程都阻塞在 I/O 操作上，
+ * 从而造成线程饥饿，进而影响整个系统的性能。所以，强烈建议你要根据不同的业务类型创建不同的线程池，以避免互相干扰。
+ *
+ * 1、创建CompletableFuture对象：runAsync(Runnable runnable)、runAsync(Runnable runnable, Executor executor)、supplyAsync(Supplier supplier)、supplyAsync(Supplier supplier, Executor executor)
+ * 2、描述串行关系：thenApply、thenAccept、thenRun、thenCompose
+ * 3、描述and关系：thenCombine、thenAcceptBoth、runAfterBoth
+ * 4、描述or关系：applyToEither、acceptEither、runAfterEither
+ * 5、异常处理：exceptionally() 的使用非常类似于 try{}catch{}中的 catch{}，但是由于支持链式编程方式，所以相对更简单。
+ * 既然有 try{}catch{}，那就一定还有 try{}finally{}，whenComplete() 和 handle() 系列方法就类似于
+ * try{}finally{}中的 finally{}，无论是否发生异常都会执行 whenComplete() 中的回调函数 consumer 和 handle() 中的回调函数 fn。
+ * whenComplete() 和 handle() 的区别在于 whenComplete() 不支持返回结果，而 handle() 是支持返回结果的
+ */
 public class CompletableFutureTest {
 
     private static void sleepRandom(){

@@ -36,23 +36,19 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class ReentrantReadWriteLockTest {
 
-    private static ExecutorService threadpool = Executors.newCachedThreadPool();
+    private static ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    public class SafeTreeMap{
-        public final Map map = new TreeMap();
+    public static class SafeTreeMap {
+        public final Map<Object, Object> map = new TreeMap<>();
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         private final Lock readLock = lock.readLock();
         private final Lock writeLock = lock.writeLock();
 
-        public Map getMap() {
-            return map;
-        }
-
         public Object get(String key) throws InterruptedException {
             readLock.lock();
             try {
-                System.out.println(Thread.currentThread().getName()+"获取到read锁");
-//                Thread.sleep(500);
+                System.out.println(Thread.currentThread().getName() + "获取到read锁");
+                Thread.sleep(1000);
                 return map.get(key);
             } finally {
                 readLock.unlock();
@@ -62,35 +58,37 @@ public class ReentrantReadWriteLockTest {
         public Object put(String key, Object value) throws InterruptedException {
             writeLock.lock();
             try {
-                System.out.println(Thread.currentThread().getName()+"获取到write锁");
-//                Thread.sleep(1000);
-                return map.put(key,value);
+                System.out.println(Thread.currentThread().getName() + "获取到write锁");
+                Thread.sleep(1000);
+                return map.put(key, value);
             } finally {
                 writeLock.unlock();
             }
         }
     }
 
-    public static void main(String[] args){
-        SafeTreeMap safeTreeMap = new ReentrantReadWriteLockTest().new SafeTreeMap();
-//        for (int i = 0; i < 5; i++) {
-            threadpool.execute(()->{
+    public static void main(String[] args) {
+        SafeTreeMap safeTreeMap = new SafeTreeMap();
+        for (int i = 0; i < 5; i++) {
+            int num = i;
+            threadPool.execute(() -> {
                 Random random = new Random();
                 for (int j = 0; j < 10; j++) {
                     try {
                         StringBuilder sb = new StringBuilder();
-                        String key1 = sb.append(Thread.currentThread().getId()).append("_").append(random.nextInt(10)).toString();
-                        Integer value = (Integer)safeTreeMap.get(key1);
-
-                        sb.setLength(0);
-                        String key2 = sb.append(Thread.currentThread().getId()).append("_").append(j).toString();
-                        safeTreeMap.put(key2,j);
+                        if (num / 2 != 0) {
+                            String key1 = sb.append(Thread.currentThread().getId()).append("_").append(random.nextInt(10)).toString();
+                            safeTreeMap.get(key1);
+                        } else {
+                            String key2 = sb.append(Thread.currentThread().getId()).append("_").append(j).toString();
+                            safeTreeMap.put(key2, j);
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             });
-//        }
-        threadpool.shutdown();
+        }
+        threadPool.shutdown();
     }
 }
