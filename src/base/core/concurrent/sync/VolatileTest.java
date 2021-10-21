@@ -23,23 +23,25 @@ public class VolatileTest {
     // c不使用volatile修饰
     public static long c = 0;
 
-    public static void main(String[] args) {
-        new Thread(()->{
-            while(a == 0) {
+    public static void main(String[] args) throws InterruptedException {
+        new Thread(() -> {
+            while (a == 0) {
                 //试着注释下面这行代码查看结果
                 long x = b;
             }
-            System.out.println("a="+ a);
+            System.out.println("a=" + a);
         }).start();
-        new Thread(()->{
-            while(c == 0) {
+        new Thread(() -> {
+            while (c == 0) {
                 //试着注释下面这行代码查看结果
                 long x = b;
             }
-            System.out.println("c="+ c);
+            System.out.println("c=" + c);
         }).start();
-        a=1;
-        b=1;
-        c=1;
+        //若不sleep主线程先于上述两个子线程，根据happens-before规则后续事件对当前事件操作可见
+        Thread.sleep(100);
+        a = 1;
+        b = 1;
+        c = 1;
     }
 }
