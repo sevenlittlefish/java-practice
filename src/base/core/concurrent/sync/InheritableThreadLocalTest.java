@@ -2,6 +2,9 @@ package base.core.concurrent.sync;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * 创建线程时，会把父线程inheritableThreadLocals的数据全部复制到子线程的Entry中
+ */
 public class InheritableThreadLocalTest {
 
     private static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
