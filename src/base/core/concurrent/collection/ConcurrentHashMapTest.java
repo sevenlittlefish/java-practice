@@ -9,7 +9,7 @@ public class ConcurrentHashMapTest {
     public static void main(String[] args) throws InterruptedException {
         int threadCount = 100;
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-        Map map = new ConcurrentHashMap();
+        Map<String,Integer> map = new ConcurrentHashMap<>();
         for (int i = 0; i < threadCount; i++) {
             new Thread(()->{
                 for (int j = 0; j < 1000; j++) {

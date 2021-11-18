@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class ConcurrentSkipListSetTest {
 
     public static void main(String[] args) throws InterruptedException {
-        ConcurrentSkipListSet set = new ConcurrentSkipListSet();
+        ConcurrentSkipListSet<Integer> set = new ConcurrentSkipListSet<>();
         for (int i = 0; i < 10; i++) {
             new Thread(()->{
                 for (int j = 0; j < 100; j++) {

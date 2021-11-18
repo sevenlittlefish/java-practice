@@ -104,27 +104,10 @@ public class ThreadAlternateTest {
         Object c = new Object();
         new Thread(() -> {
             for (int i = 0; i < 10; i++) {
-                synchronized (c){
-                    synchronized (a){
-                        a.notify();
-                        System.out.println("A");
-                    }
-                    try {
-                        if (i==9) break;
-                        c.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-        Thread.sleep(10);
-        new Thread(() -> {
-            for (int i = 0; i < 10; i++) {
                 synchronized (a){
                     synchronized (b){
                         b.notify();
-                        System.out.println("B");
+                        System.out.println("A");
                     }
                     try {
                         if (i==9) break;
@@ -141,11 +124,28 @@ public class ThreadAlternateTest {
                 synchronized (b){
                     synchronized (c){
                         c.notify();
-                        System.out.println("C");
+                        System.out.println("B");
                     }
                     try {
                         if (i==9) break;
                         b.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+        Thread.sleep(10);
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                synchronized (c){
+                    synchronized (a){
+                        a.notify();
+                        System.out.println("C");
+                    }
+                    try {
+                        if (i==9) break;
+                        c.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

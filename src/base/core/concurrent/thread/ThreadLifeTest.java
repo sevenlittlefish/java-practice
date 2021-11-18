@@ -10,8 +10,8 @@ public class ThreadLifeTest {
         ReentrantLock lock = new ReentrantLock();
         Condition condition = lock.newCondition();
 
-        new Thread(()->{
-            synchronized(object){
+        new Thread(() -> {
+            synchronized (object) {
                 try {
                     System.out.println("Thread1 waiting");
                     object.wait();
@@ -20,10 +20,10 @@ public class ThreadLifeTest {
                     e.printStackTrace();
                 }
             }
-        },"Thread1").start();
+        }, "Thread1").start();
 
-        new Thread(()->{
-            synchronized(object){
+        new Thread(() -> {
+            synchronized (object) {
                 try {
                     System.out.println("Thread2 notify");
                     object.notify();//打开或注释观察Thread1状态
@@ -32,9 +32,9 @@ public class ThreadLifeTest {
                     e.printStackTrace();
                 }
             }
-        },"Thread2").start();
+        }, "Thread2").start();
 
-        new Thread(()->{
+        new Thread(() -> {
             lock.lock();
             System.out.println("Thread3 waiting");
             try {
@@ -42,12 +42,12 @@ public class ThreadLifeTest {
                 System.out.println("Thread3 after waiting");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 lock.unlock();
             }
-        },"Thread3").start();
+        }, "Thread3").start();
 
-        new Thread(()->{
+        new Thread(() -> {
             lock.lock();
             System.out.println("Thread4");
             condition.signal();//打开或注释观察Thread3状态
@@ -56,9 +56,9 @@ public class ThreadLifeTest {
                 System.out.println("Thread3 after waiting");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 lock.unlock();
             }
-        },"Thread3").start();
+        }, "Thread3").start();
     }
 }

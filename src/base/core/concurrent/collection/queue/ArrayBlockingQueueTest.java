@@ -12,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class ArrayBlockingQueueTest {
 
     public static void main(String[] args) {
-        ArrayBlockingQueue queue = new ArrayBlockingQueue(5);
+        ArrayBlockingQueue<Integer> queue = new ArrayBlockingQueue<>(5);
         new Thread(()->{
             Random random = new Random();
             while (!Thread.interrupted()){

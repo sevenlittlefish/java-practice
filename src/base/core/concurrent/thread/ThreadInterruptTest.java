@@ -19,7 +19,7 @@ public class ThreadInterruptTest {
                 }
                 System.out.println(Thread.currentThread().getName() + " sleep/wait end");
             }
-            System.out.println("Time consume " + (System.currentTimeMillis() - start)+" ms");
+            System.out.println("Time consume " + (System.currentTimeMillis() - start) + " ms");
         });
         t.start();
 

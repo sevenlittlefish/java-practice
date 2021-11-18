@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class CopyOnWriteArraySetTest {
 
     public static void main(String[] args) throws InterruptedException {
-        CopyOnWriteArraySet set = new CopyOnWriteArraySet();
+        CopyOnWriteArraySet<Integer> set = new CopyOnWriteArraySet<>();
         for (int i = 0; i < 10; i++) {
             new Thread(()->{
                 for (int j = 0; j < 100; j++) {
@@ -18,7 +18,7 @@ public class CopyOnWriteArraySetTest {
         }
         Thread.sleep(1000);
         System.out.println("size:"+set.size());
-        for (Object o : set) {
+        for (Integer o : set) {
             System.out.println(o);
         }
     }

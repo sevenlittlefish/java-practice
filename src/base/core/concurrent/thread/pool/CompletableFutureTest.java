@@ -71,7 +71,7 @@ public class CompletableFutureTest {
      * 创建一个完成的CompletableFuture
      */
     public static void completedFutureExample(){
-        CompletableFuture cf = CompletableFuture.completedFuture("message");
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
         System.out.println(cf.isDone());
         System.out.println(Objects.equals("message",cf.getNow(null)));
     }
@@ -80,8 +80,8 @@ public class CompletableFutureTest {
      * 运行一个简单的异步阶段
      */
     public static void runAsyncExample(){
-        CompletableFuture cf = CompletableFuture.runAsync(() -> {
-            System.out.println("Is daemon ? "+Thread.currentThread().isDaemon());
+        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
+            System.out.println("Is daemon ? " + Thread.currentThread().isDaemon());
             sleepRandom();
         });
         System.out.println(cf.isDone());
@@ -106,7 +106,7 @@ public class CompletableFutureTest {
      * 在前一个阶段上应用函数
      */
     public static void thenApplyExample(){
-        CompletableFuture cf = CompletableFuture.completedFuture("message").thenApply(s -> {
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message").thenApply(s -> {
             System.out.println("Is daemon ? "+Thread.currentThread().isDaemon());
             return s.toUpperCase();
         });
@@ -117,7 +117,7 @@ public class CompletableFutureTest {
      * 在前一个阶段上异步应用函数
      */
     public static void thenApplyAsyncExample(){
-        CompletableFuture cf = CompletableFuture.completedFuture("message").thenApplyAsync(s -> {
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message").thenApplyAsync(s -> {
             System.out.println("Is daemon ? "+Thread.currentThread().isDaemon());
             sleepRandom();
             return s.toUpperCase();
@@ -138,7 +138,7 @@ public class CompletableFutureTest {
                 return new Thread(runnable, "custom-executor-" + count++);
             }
         });
-        CompletableFuture cf = CompletableFuture.completedFuture("message").thenApplyAsync(s -> {
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message").thenApplyAsync(s -> {
             System.out.println(Thread.currentThread().getName().startsWith("custom-executor-"));
             System.out.println("Is daemon ? "+Thread.currentThread().isDaemon());
             sleepRandom();
@@ -162,7 +162,7 @@ public class CompletableFutureTest {
      */
     public static void thenAcceptAsyncExample() {
         StringBuilder result = new StringBuilder();
-        CompletableFuture cf = CompletableFuture.completedFuture("thenAcceptAsync message")
+        CompletableFuture<Void> cf = CompletableFuture.completedFuture("thenAcceptAsync message")
                 .thenAcceptAsync(result::append);
 //        cf.join();
         System.out.println(result.length() > 0 ? result : "Empty result");
@@ -174,9 +174,9 @@ public class CompletableFutureTest {
     public static void applyToEitherExample() {
         String original1 = "Message1";
         String original2 = "Message2";
-        CompletableFuture cf1 = CompletableFuture.completedFuture(original1)
+        CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original1)
                 .thenApplyAsync(CompletableFutureTest::delayedUpperCase);
-        CompletableFuture cf2 = cf1.applyToEither(
+        CompletableFuture<String> cf2 = cf1.applyToEither(
                 CompletableFuture.completedFuture(original2).thenApplyAsync(CompletableFutureTest::delayedLowerCase),
                 s -> s + " from applyToEither");
         System.out.println(cf2.join());
@@ -189,7 +189,7 @@ public class CompletableFutureTest {
         String original1 = "Message1";
         String original2 = "Message2";
         StringBuilder result = new StringBuilder();
-        CompletableFuture cf = CompletableFuture.completedFuture(original1)
+        CompletableFuture<Void> cf = CompletableFuture.completedFuture(original1)
                 .thenApplyAsync(CompletableFutureTest::delayedUpperCase)
                 .acceptEither(
                         CompletableFuture.completedFuture(original2).thenApplyAsync(CompletableFutureTest::delayedLowerCase),
@@ -230,7 +230,7 @@ public class CompletableFutureTest {
      */
     public static void thenCombineExample() {
         String original = "Message";
-        CompletableFuture cf = CompletableFuture.completedFuture(original).thenApply(CompletableFutureTest::delayedUpperCase)
+        CompletableFuture<String> cf = CompletableFuture.completedFuture(original).thenApply(CompletableFutureTest::delayedUpperCase)
                 .thenCombine(
                         CompletableFuture.completedFuture(original).thenApply(CompletableFutureTest::delayedLowerCase),
                         (s1, s2) -> s1 + s2);
@@ -242,7 +242,7 @@ public class CompletableFutureTest {
      */
     public static void thenCombineAsyncExample() {
         String original = "Message";
-        CompletableFuture cf = CompletableFuture.completedFuture(original)
+        CompletableFuture<String> cf = CompletableFuture.completedFuture(original)
                 .thenApplyAsync(CompletableFutureTest::delayedUpperCase)
                 .thenCombine(
                         CompletableFuture.completedFuture(original).thenApplyAsync(CompletableFutureTest::delayedLowerCase),
@@ -255,7 +255,7 @@ public class CompletableFutureTest {
      */
     public static void thenComposeExample() {
         String original = "Message";
-        CompletableFuture cf = CompletableFuture.completedFuture(original)
+        CompletableFuture<String> cf = CompletableFuture.completedFuture(original)
                 .thenApply(CompletableFutureTest::delayedUpperCase)
                 .thenCompose(upper -> CompletableFuture.completedFuture(original)
                         .thenApply(CompletableFutureTest::delayedLowerCase)
@@ -269,7 +269,7 @@ public class CompletableFutureTest {
     public static void anyOfExample() {
         StringBuilder result = new StringBuilder();
         List<String> messages = Arrays.asList("a", "b", "c");
-        List<CompletableFuture> futures = messages.stream()
+        List<CompletableFuture<String>> futures = messages.stream()
                 .map(msg -> CompletableFuture.completedFuture(msg).thenApply(CompletableFutureTest::delayedUpperCase))
                 .collect(Collectors.toList());
         CompletableFuture.anyOf(futures.toArray(new CompletableFuture[futures.size()]))
@@ -288,7 +288,7 @@ public class CompletableFutureTest {
     public static void anyOfAsyncExample() {
         StringBuilder result = new StringBuilder();
         List<String> messages = Arrays.asList("a", "b", "c");
-        List<CompletableFuture> futures = messages.stream()
+        List<CompletableFuture<String>> futures = messages.stream()
                 .map(msg -> CompletableFuture.completedFuture(msg).thenApplyAsync(CompletableFutureTest::delayedUpperCase))
                 .collect(Collectors.toList());
         CompletableFuture<Object> cf = CompletableFuture.anyOf(futures.toArray(new CompletableFuture[futures.size()]))
@@ -308,7 +308,7 @@ public class CompletableFutureTest {
     public static void allOfExample() {
         StringBuilder result = new StringBuilder();
         List<String> messages = Arrays.asList("a", "b", "c");
-        List<CompletableFuture> futures = messages.stream()
+        List<CompletableFuture<String>> futures = messages.stream()
                 .map(msg -> CompletableFuture.completedFuture(msg).thenApply(CompletableFutureTest::delayedUpperCase))
                 .collect(Collectors.toList());
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
@@ -325,10 +325,10 @@ public class CompletableFutureTest {
     public static void allOfAsyncExample() {
         StringBuilder result = new StringBuilder();
         List<String> messages = Arrays.asList("a", "b", "c");
-        List<CompletableFuture> futures = messages.stream()
+        List<CompletableFuture<String>> futures = messages.stream()
                 .map(msg -> CompletableFuture.completedFuture(msg).thenApplyAsync(CompletableFutureTest::delayedUpperCase))
                 .collect(Collectors.toList());
-        CompletableFuture allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
                 .whenComplete((v, th) -> {
                     futures.forEach(cf -> System.out.println(isUpperCase((String) cf.getNow(null))));
                     result.append("done");

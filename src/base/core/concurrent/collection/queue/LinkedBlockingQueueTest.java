@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class LinkedBlockingQueueTest {
 
     public static void main(String[] args) {
-        LinkedBlockingQueue queue = new LinkedBlockingQueue(5);
+        LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<>(5);
         new Thread(()->{
             Random random = new Random();
             while (!Thread.interrupted()){

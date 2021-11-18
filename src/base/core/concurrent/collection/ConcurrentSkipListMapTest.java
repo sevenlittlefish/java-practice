@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class ConcurrentSkipListMapTest {
 
     public static void main(String[] args) {
-        Map concurrentSkipListMap = new ConcurrentSkipListMap<>();
-        Map concurrentHashMap = new ConcurrentHashMap();
+        Map<Integer,Integer> concurrentSkipListMap = new ConcurrentSkipListMap<>();
+        Map<Integer,Integer> concurrentHashMap = new ConcurrentHashMap<>();
 
         int size = 1000000;
         Random random = new Random();
@@ -34,7 +34,7 @@ public class ConcurrentSkipListMapTest {
         System.out.println("ConcurrentSkipListMap spend time:"+(System.currentTimeMillis() - start2)+" ms");
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        List list = new LinkedList();
+        List<Integer> list = new LinkedList<>();
         for (int i = 0; i < size; i++) {
             list.add(i);
         }

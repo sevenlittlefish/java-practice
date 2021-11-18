@@ -14,7 +14,7 @@ public class CopyOnWriteArrayListTest {
     public static void main(String[] args) throws InterruptedException {
         int threadCount = 100;
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-        CopyOnWriteArrayList list = new CopyOnWriteArrayList();
+        CopyOnWriteArrayList<Integer> list = new CopyOnWriteArrayList<>();
         for (int i = 0; i < threadCount; i++) {
             threadpool.execute(() -> {
                 for (int j = 0; j < 1000; j++) {
