@@ -1,5 +1,6 @@
 package base.core.concurrent.thread.pool.custom;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -14,8 +15,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
     public static final int NEW = 0;
     public static final int FINISHED = 1;
     public static final int EXCEPTION = 2;
-
-    private AtomicInteger tryTimes = new AtomicInteger();
+    public static final int TIMEOUT = 3;
 
     /**
      * 任务执行结果
@@ -38,6 +38,11 @@ public class FutureTask<T> implements Runnable,Future<T> {
 
     @Override
     public T get() {
+        return get(0,null);
+    }
+
+    @Override
+    public T get(long timeout, TimeUnit unit) {
         int s = state.get();
         //若任务还未完成，判断是否需要进入阻塞状态
         if(s == NEW){
@@ -52,7 +57,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
                 }
                 //此处必须把caller的CAS更新和park()方法分成两步处理，不能把park()放在CAS里面
                 else if(!marked){
-                    /**
+                    /*
                      * 尝试更新调用者线程
                      * 试想断点停在此处
                      * 此时state为NEW，让run()方法执行到底，它不会执行finish()中的unpark()方法
@@ -61,7 +66,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
                      */
                     marked = caller.compareAndSet(null,Thread.currentThread());
                 }else{
-                    /**
+                    /*
                      * 调用者线程更新之后park当前线程
                      * 试想断点停在此处
                      * 此时state为NEW，让run()方法执行到底，因为上面的caller已经设置值了
@@ -71,10 +76,12 @@ public class FutureTask<T> implements Runnable,Future<T> {
                      * 如果线程执行了park()方法，那么执行unpark()方法会唤醒那个线程
                      * 如果先执行了unpark()方法，那么线程下一次执行park()方法将不会阻塞
                      */
-                    LockSupport.park();//当实际线程数超出线程池可处理线程数，多余线程将会永远阻塞在这里，可使用以下代码处理
-//                    tryTimes.getAndIncrement();
-//                    if(tryTimes.get() > 1) break;
-//                    LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(5));
+                    if (unit == null)
+                        LockSupport.park();
+                    else{
+                        LockSupport.parkNanos(unit.toNanos(timeout));
+                        state.compareAndSet(NEW,TIMEOUT);
+                    }
                 }
             }
         }
@@ -92,7 +99,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
         }
         try {
             T r = task.call();
-            /**
+            /*
              * CAS更新state值为FINISHED
              * 执行成功，把结果r赋给result
              * 执行失败，说明state状态不为NEW，说明已经执行过了
@@ -102,7 +109,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
             }
             finish();
         } catch (Exception e) {
-            /**
+            /*
              * CAS更新state值为EXCEPTION
              * 执行成功，把异常e赋给result
              * 执行失败，说明state状态不为NEW，说明已经执行过了
@@ -114,7 +121,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
     }
 
     private void finish(){
-        /**
+        /*
          * 检查调用者是否为空，如果不为空，唤醒它
          * 调用者在调用get()方法的时候进入阻塞状态
          */
