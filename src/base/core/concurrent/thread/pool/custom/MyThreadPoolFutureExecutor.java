@@ -1,13 +1,25 @@
 package base.core.concurrent.thread.pool.custom;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class MyThreadPoolFutureExecutor extends MyThreadPoolExecutor implements FutureExecutor, Executor {
 
-    public MyThreadPoolFutureExecutor(String name, int coreSize, int maxSize, BlockingQueue<Runnable> taskQueue, RejectPolicy rejectPolicy) {
-        super(coreSize, maxSize, 60, TimeUnit.SECONDS, taskQueue, Executors.defaultThreadFactory(), rejectPolicy);
+    public MyThreadPoolFutureExecutor(int coreSize, int maxSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> taskQueue) {
+        super(coreSize, maxSize, keepAliveTime, unit, taskQueue);
+    }
+
+    public MyThreadPoolFutureExecutor(int coreSize, int maxSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> taskQueue, ThreadFactory threadFactory) {
+        super(coreSize, maxSize, keepAliveTime, unit, taskQueue, threadFactory);
+    }
+
+    public MyThreadPoolFutureExecutor(int coreSize, int maxSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> taskQueue, RejectPolicy rejectPolicy) {
+        super(coreSize, maxSize, keepAliveTime, unit, taskQueue, rejectPolicy);
+    }
+
+    public MyThreadPoolFutureExecutor(int coreSize, int maxSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> taskQueue, ThreadFactory threadFactory, RejectPolicy rejectPolicy) {
+        super(coreSize, maxSize, keepAliveTime, unit, taskQueue, threadFactory, rejectPolicy);
     }
 
     @Override

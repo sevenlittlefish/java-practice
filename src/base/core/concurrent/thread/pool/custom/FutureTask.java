@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
-public class FutureTask<T> implements Runnable,Future<T> {
+public class FutureTask<T> implements Runnable, Future<T> {
 
     /**
      * 任务执行状态，0未开始，1完成，2异常
@@ -32,31 +32,31 @@ public class FutureTask<T> implements Runnable,Future<T> {
 
     private Callable<T> task;
 
-    public FutureTask(Callable<T> task){
+    public FutureTask(Callable<T> task) {
         this.task = task;
     }
 
     @Override
     public T get() {
-        return get(0,null);
+        return get(0, null);
     }
 
     @Override
     public T get(long timeout, TimeUnit unit) {
         int s = state.get();
         //若任务还未完成，判断是否需要进入阻塞状态
-        if(s == NEW){
+        if (s == NEW) {
             //标识调用者线程是否被标记过
             boolean marked = false;
-            for (;;){
+            for (;;) {
                 //重新获取state的值
                 s = state.get();
                 //如果state大于NEW说明完成了，跳出循环
-                if(s > NEW){
+                if (s > NEW) {
                     break;
                 }
                 //此处必须把caller的CAS更新和park()方法分成两步处理，不能把park()放在CAS里面
-                else if(!marked){
+                else if (!marked) {
                     /*
                      * 尝试更新调用者线程
                      * 试想断点停在此处
@@ -64,8 +64,8 @@ public class FutureTask<T> implements Runnable,Future<T> {
                      * 这时打开断点，这里会更新caller成功，但是循环从头再执行一遍发现state已经变了
                      * 直接在上面的if(s>NEW)处跳出循环了，因为finish()在修改state内部
                      */
-                    marked = caller.compareAndSet(null,Thread.currentThread());
-                }else{
+                    marked = caller.compareAndSet(null, Thread.currentThread());
+                } else {
                     /*
                      * 调用者线程更新之后park当前线程
                      * 试想断点停在此处
@@ -78,23 +78,23 @@ public class FutureTask<T> implements Runnable,Future<T> {
                      */
                     if (unit == null)
                         LockSupport.park();
-                    else{
+                    else {
                         LockSupport.parkNanos(unit.toNanos(timeout));
-                        state.compareAndSet(NEW,TIMEOUT);
+                        state.compareAndSet(NEW, TIMEOUT);
                     }
                 }
             }
         }
-        if(s == FINISHED)
-            return (T)result;
-        if(result instanceof Exception)
-            throw new RuntimeException((Throwable)result);
+        if (s == FINISHED)
+            return (T) result;
+        if (result instanceof Exception)
+            throw new RuntimeException((Throwable) result);
         return null;
     }
 
     @Override
     public void run() {
-        if(state.get() != NEW){
+        if (state.get() != NEW) {
             return;
         }
         try {
@@ -104,7 +104,7 @@ public class FutureTask<T> implements Runnable,Future<T> {
              * 执行成功，把结果r赋给result
              * 执行失败，说明state状态不为NEW，说明已经执行过了
              */
-            if(state.compareAndSet(NEW,FINISHED)){
+            if (state.compareAndSet(NEW, FINISHED)) {
                 this.result = r;
             }
             finish();
@@ -114,19 +114,19 @@ public class FutureTask<T> implements Runnable,Future<T> {
              * 执行成功，把异常e赋给result
              * 执行失败，说明state状态不为NEW，说明已经执行过了
              */
-            if(state.compareAndSet(NEW,EXCEPTION)){
+            if (state.compareAndSet(NEW, EXCEPTION)) {
                 this.result = e;
             }
         }
     }
 
-    private void finish(){
+    private void finish() {
         /*
          * 检查调用者是否为空，如果不为空，唤醒它
          * 调用者在调用get()方法的时候进入阻塞状态
          */
-        for (Thread c;(c = caller.get()) != null;){
-            if(caller.compareAndSet(c,null)){
+        for (Thread c; (c = caller.get()) != null; ) {
+            if (caller.compareAndSet(c, null)) {
                 LockSupport.unpark(c);
             }
         }

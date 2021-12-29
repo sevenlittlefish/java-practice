@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyThreadPoolExecutorTest {
     public static void main(String[] args) {
-        Executor threadPool = new MyThreadPoolExecutor(2,4, 10, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(1), Executors.defaultThreadFactory(), new DiscardRejectPolicy());
+        Executor threadPool = new MyThreadPoolExecutor(2, 4, 10, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(1), Executors.defaultThreadFactory(), new DiscardRejectPolicy());
         AtomicInteger num = new AtomicInteger();
         for (int i = 0; i < 10; i++) {
             threadPool.execute(() -> {
