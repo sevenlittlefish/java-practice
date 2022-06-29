@@ -37,5 +37,15 @@ public class ListCompareTest {
         linkList.get(len/2);
         end = System.currentTimeMillis();
         System.out.println("LinkedList get "+(end-start)+" ms");
+
+        start = System.currentTimeMillis();
+        for (Integer integer : arrList) {}
+        end = System.currentTimeMillis();
+        System.out.println("ArrayList foreach "+(end-start)+" ms");
+
+        start = System.currentTimeMillis();
+        for (Integer integer : linkList) {}
+        end = System.currentTimeMillis();
+        System.out.println("LinkedList foreach "+(end-start)+" ms");
     }
 }
