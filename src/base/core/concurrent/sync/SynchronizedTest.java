@@ -16,7 +16,7 @@ public class SynchronizedTest {
 
     public static int num = 0;
 
-    public static void syncAdd(String name){
+    public static void syncAddByClass(String name){
         synchronized (SynchronizedTest.class){
             try {
                 System.out.println(name+"-add:"+(++num));
@@ -27,8 +27,26 @@ public class SynchronizedTest {
         }
     }
 
-    public static void syncSub(String name){
-        synchronized (SynchronizedTest.class){
+    public static synchronized void syncSubByClass(String name){
+        try {
+            System.out.println(name+"-sub:"+(--num));
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void syncAddByInstance(String name){
+        try {
+            System.out.println(name+"-add:"+(++num));
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void syncSubByInstance(String name){
+        synchronized (this){
             try {
                 System.out.println(name+"-sub:"+(--num));
                 Thread.sleep(1000);
@@ -39,10 +57,13 @@ public class SynchronizedTest {
     }
 
     public static void main(String[] args){
+        SynchronizedTest obj = new SynchronizedTest();
         for (int i = 0; i < 5; i++) {
             int num = i;
-            new Thread(()->syncAdd("thread-"+ num)).start();
-            new Thread(()->syncSub("thread-"+ num)).start();
+            /*new Thread(()-> syncAddByClass("thread-"+ num)).start();
+            new Thread(()-> syncSubByClass("thread-"+ num)).start();*/
+            new Thread(()->obj.syncAddByInstance("thread-"+ num)).start();
+            new Thread(()->obj.syncSubByInstance("thread-"+ num)).start();
         }
     }
 }
